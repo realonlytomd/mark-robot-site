@@ -4,9 +4,9 @@ function Landing() {
   return (
     <div className="Landing"> 
         <header className="Landing-header">
-            <div className="Justwords">
+            <div>
                 <p>
-                Mark's info goes here.
+                  Mark's Title goes here.
                 </p>
             </div>
         </header> 
