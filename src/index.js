@@ -11,6 +11,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <App />
+    <Landing />
+    <Pictures />
+    <Profiles />
   </React.StrictMode>
 );
 // above between React.StrictMode code, Put: <Landing />  <Pictures /> and <Profiles /> back in
