@@ -8,12 +8,17 @@ import Profiles from './Profiles';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
+const el = (
+  <div>
     <App />
     <Landing />
     <Pictures />
     <Profiles />
+  </div>
+)
+root.render(
+  <React.StrictMode>
+    {el}
   </React.StrictMode>
 );
 // above between React.StrictMode code, Put: <Landing />  <Pictures /> and <Profiles /> back in
