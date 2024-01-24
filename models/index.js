@@ -2,7 +2,7 @@
 //  
 //
 module.exports = {
-    Robot: require("./Robot"),
+    Name: require("./Name"),
     Image: require("./Image"),
     Bio: require("./Bio")
   };
