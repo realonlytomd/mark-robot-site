@@ -88,4 +88,97 @@ module.exports = function(router) {
                 });
         });
 
+        // need to find the correct robot, then fill in the data (title, desc.) and the new image array
+    router.post("/createImage/:id", function(req, res) {
+        console.log("BEFORE CREATE IMAGE - req.body: ", req.body);
+        //insert creation of the kitten's metrics
+        db.Image.create(req.body) // this does everything above the image
+        .then(function(dbImage) {
+            console.log("AFTER CREATE IMAGE - api-routes.js, dbImager: ", dbImage);
+            // pushing the new image id into the robot's document image array
+        return db.Robot.findOneAndUpdate(
+            { _id: req.params.id },
+            { $push: { image: dbImage._id } }, 
+            { new: true }
+            );
+        })
+        .then(function(dbRobot) {
+            // send back the correct robot with new data in the image arrays
+            console.log("AFTER CORRECT ROBOT UPDATED - dbRobot: ", dbRobot);
+            res.json(dbRobot);
+        })
+        .catch(function(err) {
+        // If an error occurred, send it to the client
+        res.json(err);
+        });
+    });
+
+    //This is Step 8 from notes on uploading the images chosen by the user
+    // 
+    router.post("/createImage/:id", upload.single("ImageInput"), (req, res, next) => {
+        console.log("from api-routes step 8, req.file.filename: ", req.file.filename);
+        var obj = {
+            title: req.body.title,
+            desc: req.body.desc,
+            img: {
+                data: fs.readFileSync(path.join(__dirname + "/../uploads/" + req.file.filename)),
+                contentType: "image/jpeg"
+            }
+        }
+        db.Image.create(obj)
+            .then(function(dbImage) {
+                console.log("after .create Image - dbImage: ", dbImage);
+                //pushing the new image into the document array
+                return db.Robot.findOneAndUpdate(
+                    { _id: req.params.id },
+                    { $push: { image: dbImage._id } },
+                    { new: true }
+                );
+            })
+            .then(function(dbImage) {
+                //send back the correct Image with the new data in the image array
+                res.json(dbImage);
+
+            })
+            .catch(function(err) {
+                //If an error occurred, send back
+                res.json(err);
+            });
+    });
+
+    // Route for getting all of the images from a particular robot from the db
+    //This .get only gets the current robot - since don't have one user logged, will need
+    // to be changed, I think
+    router.get("/getCurrentRobot:id", function(req, res) {
+        console.log("inside api-routes: /getCurrentRobot:id, req.params: ", req.params);
+        // need to find the correct robot, THEN all their images, 
+        db.Robot.find({ _id: req.params.id}) // This is to limit the find to just current user
+            .then(function(dbCurrentRobot) {
+                res.json(dbCurrentRobot);
+                console.log("from  route /getCurrentRobot:id, dbCurrentRobot: ", dbCurrentRobot);
+                console.log("dbCurrentRobot.kitten.length: ", dbCurrentRobot[0].image.length);
+            })
+            .catch(function(err) {
+            // However, if an error occurred, send it to the client
+            res.json(err);
+            });
+    });
+    
+
+    //This route gets one image document from robot collection
+    router.get("/getAnImage/:id", function(req, res) {
+        console.log("inside api-routes: req.params: ", req.params);
+        // need to find the correct image, and retrieve it's data, 
+        db.Image.find({ _id: req.params.id })
+            .then(function(dbAnImage) {
+                res.json(dbAnImage);
+                // console.log("from route /getAnImage:id, dbAnImage: ", dbAnImage);
+                //console.log("dbCurrentRobot.image.length", dbAnImage[0].image.length);
+            })
+            .catch(function(err) {
+            // However, if an error occurred, send it to the client
+            res.json(err);
+            });
+    });
+
 };
