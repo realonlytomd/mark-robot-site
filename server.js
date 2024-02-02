@@ -31,6 +31,9 @@ mongoose.Promise = Promise;
    });
   }
 
+// // Routes
+require("./routes/api-routes.js")(app);
+
 // This displays message that the server running and listening to specified port
 app.listen(port, () => console.log(`Listening on port ${port}`)); //Line 6
 
